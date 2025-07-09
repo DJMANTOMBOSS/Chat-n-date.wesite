@@ -1,0 +1,26 @@
+<form id="signupForm">
+  <input name="name" placeholder="Full Name" required />
+  <input name="age" type="number" placeholder="Age" required />
+  <input name="location" placeholder="Location" required />
+  <select name="gender" required><option>Male</option><option>Female</option></select>
+  <textarea name="interests" placeholder="Your Interests"></textarea>
+  <input name="email" type="email" placeholder="Email" />
+  <input name="phone" type="tel" placeholder="Phone" />
+  <input name="password" type="password" placeholder="Password" required />
+  <button type="submit">Sign Up</button>
+</form>
+<script>
+document.getElementById('signupForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  const data = Object.fromEntries(form.entries());
+  const res = await fetch('/api/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const result = await res.json();
+  alert(result.message || result.error);
+  if (res.ok) window.location.href = '/login.html';
+};
+</script>

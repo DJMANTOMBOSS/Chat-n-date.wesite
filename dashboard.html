@@ -1,0 +1,17 @@
+<h2>Welcome Back!</h2>
+<div id="userProfile"></div>
+<h3>Your Matches</h3>
+<div id="matchesContainer">Loading...</div>
+<script>
+const token = localStorage.getItem('token');
+if (!token) window.location.href = '/login.html';
+async function loadDashboard() {
+  const res = await fetch('/api/user', { headers: { Authorization: `Bearer ${token}` }});
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
+  document.getElementById('userProfile').innerHTML = `<p>Name: ${data.name}</p>`;
+  document.getElementById('matchesContainer').innerHTML = (data.matches || [])
+    .map(user => `<p><a href="/chat.html?to=${user._id}">${user.name}</a></p>`).join('');
+}
+loadDashboard();
+</script>
