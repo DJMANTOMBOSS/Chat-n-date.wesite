@@ -1,0 +1,29 @@
+<h2>Chat</h2>
+<div id="chatBox"></div>
+<form id="chatForm">
+  <input type="text" name="message" placeholder="Type..." required />
+  <button>Send</button>
+</form>
+<script>
+const token = localStorage.getItem('token');
+const to = new URLSearchParams(location.search).get('to');
+async function loadChat() {
+  const res = await fetch(`/api/message?to=${to}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const data = await res.json();
+  document.getElementById('chatBox').innerHTML = data.map(m => `<p><b>${m.fromName}:</b> ${m.message}</p>`).join('');
+}
+document.getElementById('chatForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const msg = e.target.message.value;
+  await fetch('/api/message', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ to, message: msg })
+  });
+  e.target.message.value = '';
+  loadChat();
+};
+loadChat();
+</script>
